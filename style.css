@@ -1,0 +1,273 @@
+:root{
+  --bg:#0b0f14;
+  --card:#121824;
+  --card2:#0f1520;
+  --text:#e8eef7;
+  --muted:#aab6c5;
+  --border:rgba(255,255,255,.08);
+  --primary:#4ea1ff;
+  --danger:#ff5a6b;
+  --ok:#47d18c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+  background:linear-gradient(180deg,var(--bg), #070a0e);
+  color:var(--text);
+}
+.wrap{max-width:1100px;margin:0 auto;padding:18px}
+.topbar{position:sticky;top:0;z-index:5;background:rgba(11,15,20,.82);backdrop-filter: blur(10px);border-bottom:1px solid var(--border)}
+.topbar h1{margin:0;font-size:20px}
+.subtitle{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+.card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:14px;padding:16px;margin:16px 0;box-shadow:0 12px 40px rgba(0,0,0,.28)}
+.card h2{margin:0 0 10px 0;font-size:16px}
+.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:900px){.grid,.grid2{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field span{font-size:13px;color:var(--muted)}
+input[type=file]{background:rgba(255,255,255,.03);border:1px dashed var(--border);border-radius:10px;padding:10px;color:var(--text)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.btn{border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+.btn:hover{background:rgba(255,255,255,.06)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.primary{background:rgba(78,161,255,.16);border-color:rgba(78,161,255,.35)}
+.btn.primary:hover{background:rgba(78,161,255,.22)}
+.btn.ghost{background:transparent}
+.status{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.02);font-size:13px}
+.status.ok{border-color:rgba(71,209,140,.35);background:rgba(71,209,140,.08)}
+.status.warn{border-color:rgba(255,184,76,.35);background:rgba(255,184,76,.08)}
+.status.err{border-color:rgba(255,90,107,.35);background:rgba(255,90,107,.08)}
+.details summary{cursor:pointer;color:var(--muted)}
+.filelist{margin:10px 0 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+.mini{border:1px solid var(--border);border-radius:12px;padding:12px;background:rgba(255,255,255,.02)}
+.mini h3{margin:0 0 8px 0;font-size:13px;color:var(--muted)}
+.pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size:12px;line-height:1.35;background:rgba(0,0,0,.25);border:1px solid var(--border);padding:10px;border-radius:10px}
+code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px;border:1px solid var(--border)}
+.footer{padding-bottom:30px}
+.footnote{margin-top:10px;font-size:12px}
+body {
+  font-family: system-ui, sans-serif;
+  background: #f8f9fa;
+  margin: 0;
+}
+
+.app-header {
+  background: #1c7ed6;
+  color: white;
+  padding: 20px;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.step {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.step.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tab {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  background: #eee;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #1c7ed6;
+  color: white;
+}
+
+.status {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.preview-table th,
+.preview-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+td.locked {
+  background: #f1f3f5;
+}
+
+td.editable {
+  background: #fff9db;
+  cursor: text;
+}
+
+td.editable:focus {
+  outline: 2px solid #fab005;
+}
+
+/* ============================= */
+/* LISIBILITÉ GLOBALE            */
+/* ============================= */
+
+body {
+  color: #000;
+}
+
+p, span, label, li, th, td, button {
+  color: #000;
+}
+
+/* Statuts */
+.status {
+  color: #000;
+}
+
+.status.ok {
+  color: #000;
+}
+
+.status.err {
+  color: #b00020; /* rouge lisible */
+}
+
+/* Étapes */
+.step,
+.step p,
+.step label {
+  color: #000;
+}
+
+/* Preview */
+#previewArea {
+  color: #000;
+}
+
+/* Tableau preview */
+.preview-table th,
+.preview-table td {
+  color: #000;
+}
+
+/* Champs éditables */
+.preview-table td.editable {
+  color: #000;
+  background: #fffbe6; /* léger jaune pour bien voir l’édition */
+  outline: none;
+}
+/* -----------------------------
+   LISIBILITÉ GLOBALE
+----------------------------- */
+
+body {
+  color: #111;
+}
+
+p, label, h1, h2, h3 {
+  color: #111;
+}
+
+.status {
+  color: #111;
+  font-weight: 500;
+}
+
+.status.ok {
+  color: #0a7a2f;
+}
+
+.status.err {
+  color: #b30000;
+}
+
+/* -----------------------------
+   INPUT FILE (PDF + XML)
+----------------------------- */
+
+input[type="file"] {
+  color: #111;
+  font-size: 14px;
+}
+
+input[type="file"]::file-selector-button {
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* -----------------------------
+   TABLEAUX PREVIEW
+----------------------------- */
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #111;
+}
+
+.preview-table th {
+  background: #f2f2f2;
+  color: #000;
+  text-align: left;
+  padding: 6px;
+  border-bottom: 1px solid #ccc;
+}
+
+.preview-table td {
+  padding: 6px;
+  border-bottom: 1px solid #ddd;
+}
+
+.preview-table td.locked {
+  background: #f9f9f9;
+}
+
+.preview-table td.editable {
+  background: #fff;
+  border: 1px solid #ccc;
+  cursor: text;
+}
+body {
+  color: #000;
+}
+
+.status,
+.preview-table,
+.preview-table td,
+.preview-table th,
+#pdfRename,
+#pdfRename p,
+#pdfRename span {
+  color: #000 !important;
+}
+
+input[type="file"] {
+  color: #000;
+}
+
+.tab {
+  color: #000;
+}

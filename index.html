@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Export Amiante SIA</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script type="module" src="js/app.js"></script>
+
+<body>
+
+<header class="app-header">
+  <h1>Export Amiante SIA</h1>
+  <p>Génération Excel depuis une mission Liciel</p>
+</header>
+
+<main class="container">
+
+  <!-- ÉTAPE 1 -->
+  <section class="step active" id="step1">
+    <h2>1. Sélection de la mission</h2>
+    <p>Sélectionne le dossier racine de la mission (contenant le dossier <strong>/XML</strong>)</p>
+
+    <input type="file" id="missionFolder" webkitdirectory directory multiple>
+
+    <div id="xmlStatus" class="status"></div>
+  </section>
+
+  <!-- ÉTAPE 2 -->
+  <section class="step disabled" id="step2">
+    <h2>2. Analyse des fichiers XML</h2>
+    <button id="analyzeBtn">Analyser les XML</button>
+    <div id="analysisStatus" class="status"></div>
+  </section>
+
+  <!-- ÉTAPE 3 -->
+  <section class="step disabled" id="step3">
+    <h2>3. Prévisualisation & corrections</h2>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="identification">Identification SIA</button>
+      <button class="tab" data-tab="docs">Étude documentaire</button>
+      <button class="tab" data-tab="reperes">Repères amiante</button>
+      <button class="tab" data-tab="nomenclature">Nomenclature 46.020</button>
+    </div>
+
+    <div id="previewArea"></div>
+  </section>
+
+  <!-- ÉTAPE 4 -->
+  <section class="step disabled" id="step4">
+    <h2>4. Export Excel</h2>
+    <button id="exportBtn">Générer le fichier Excel (.xlsx)</button>
+  </section>
+
+   <!-- ÉTAPE 5 -->
+<section class="step disabled" id="step5">
+  <h2>5. Renommage PDF client</h2>
+
+  <p>Sélectionne le PDF du rapport (racine de la mission)</p>
+
+  <input type="file" id="pdfInput" accept="application/pdf">
+
+  <p>Type de diagnostic</p>
+
+  <select id="diagnosticType">
+    <option value="RAAT">RAAT - Repérage Amiante Avant Travaux</option>
+    <option value="RAAD">RAAD - Repérage Amiante Avant Démolition</option>
+    <option value="RAAV">RAAV - Repérage Amiante Avant Vente</option>
+    <option value="DAPP">DAPP - Diagnostic Amiante Parties Privatives</option>
+    <option value="EXAM">EXAM - Examen Visuel</option>
+    <option value="MESA">MESA - Mesures Empoussièrement</option>
+    <option value="RADTA">RADTA</option>
+    <option value="DTA">DTA</option>
+    <option value="FRDTA">FRDTA</option>
+    <option value="BSDA">BSDA</option>
+  </select>
+
+  <p>
+  <strong>PDF sélectionné :</strong>
+  <span id="pdfOriginalName">—</span>
+</p>
+
+<p>
+  <strong>Nom final client :</strong>
+  <span id="pdfFinalName">—</span>
+</p>
+
+  <button id="renamePdfBtn">Renommer et télécharger le PDF</button>
+</section>
+
+
+</main>
+
+</body>
+</html>
