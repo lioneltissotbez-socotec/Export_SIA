@@ -805,30 +805,30 @@ document.getElementById("step5").classList.remove("disabled");
 }
 
 function exportExcel() {
+
   if (!state.extracted) {
     alert("Aucune donnée à exporter.");
     return;
   }
 
-  // Nom client calculé dynamiquement
+  // 🔥 récupère le nom client automatiquement
   const baseName = getClientBaseFileName();
+
   if (!baseName) {
-    alert("Nom client non disponible.");
+    alert("Nom client non généré. Vérifie le type de diagnostic ou l'analyse XML.");
     return;
   }
 
-  // Injecte les valeurs éditées
+  // Injecte les valeurs éditées UI
   state.extracted.identification = { ...state.identification };
 
   const wb = buildWorkbook(state.extracted);
 
-  // 🔥 même nom que le PDF client
+  // 🔥 même nom que PDF mais en XLSX
   const excelFileName = baseName + ".xlsx";
 
   XLSX.writeFile(wb, excelFileName);
 }
-
-
 
 // -------------------------------
 // UI — Previews par onglet
