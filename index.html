@@ -20,9 +20,9 @@
   <!-- ÉTAPE 1 -->
   <section class="step active" id="step1">
     <h2>1. Sélection de la mission</h2>
-    <p>Sélectionne le dossier racine de la mission (Exemple <strong>2509CHNLI-BI14320000001017</strong>)</p>
+    <p>Sélectionne le dossier racine de la mission (contenant le dossier <strong>/XML</strong>)</p>
 
-    <input type="file" id="missionFolder" webkitdirectory directory multiple>
+    <button id="selectFolderBtn" class="primary">Sélectionner le dossier mission</button>
 
     <div id="xmlStatus" class="status"></div>
   </section>
@@ -52,6 +52,7 @@
   <section class="step disabled" id="step4">
     <h2>4. Export Excel</h2>
     <button id="exportBtn">Générer le fichier Excel (.xlsx)</button>
+    <div id="exportStatus" class="status"></div>
   </section>
 
    <!-- ÉTAPE 5 -->
@@ -87,7 +88,8 @@
   <span id="pdfFinalName">—</span>
 </p>
 
-  <button id="renamePdfBtn">Renommer et télécharger le PDF</button>
+  <button id="renamePdfBtn">Renommer et enregistrer le PDF</button>
+  <div id="pdfSaveStatus" class="status"></div>
 </section>
 
 
