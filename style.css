@@ -1,65 +1,40 @@
-:root{
-  --bg:#0b0f14;
-  --card:#121824;
-  --card2:#0f1520;
-  --text:#e8eef7;
-  --muted:#aab6c5;
-  --border:rgba(255,255,255,.08);
-  --primary:#4ea1ff;
-  --danger:#ff5a6b;
-  --ok:#47d18c;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
-  background:linear-gradient(180deg,var(--bg), #070a0e);
-  color:var(--text);
-}
-.wrap{max-width:1100px;margin:0 auto;padding:18px}
-.topbar{position:sticky;top:0;z-index:5;background:rgba(11,15,20,.82);backdrop-filter: blur(10px);border-bottom:1px solid var(--border)}
-.topbar h1{margin:0;font-size:20px}
-.subtitle{margin:6px 0 0 0;color:var(--muted);font-size:13px}
-.card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:14px;padding:16px;margin:16px 0;box-shadow:0 12px 40px rgba(0,0,0,.28)}
-.card h2{margin:0 0 10px 0;font-size:16px}
-.muted{color:var(--muted)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:900px){.grid,.grid2{grid-template-columns:1fr}}
-.field{display:flex;flex-direction:column;gap:6px}
-.field span{font-size:13px;color:var(--muted)}
-input[type=file]{background:rgba(255,255,255,.03);border:1px dashed var(--border);border-radius:10px;padding:10px;color:var(--text)}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-.btn{border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600}
-.btn:hover{background:rgba(255,255,255,.06)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn.primary{background:rgba(78,161,255,.16);border-color:rgba(78,161,255,.35)}
-.btn.primary:hover{background:rgba(78,161,255,.22)}
-.btn.ghost{background:transparent}
-.status{margin-top:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.02);font-size:13px}
-.status.ok{border-color:rgba(71,209,140,.35);background:rgba(71,209,140,.08)}
-.status.warn{border-color:rgba(255,184,76,.35);background:rgba(255,184,76,.08)}
-.status.err{border-color:rgba(255,90,107,.35);background:rgba(255,90,107,.08)}
-.details summary{cursor:pointer;color:var(--muted)}
-.filelist{margin:10px 0 0 0;padding-left:18px;color:var(--muted);font-size:13px}
-.mini{border:1px solid var(--border);border-radius:12px;padding:12px;background:rgba(255,255,255,.02)}
-.mini h3{margin:0 0 8px 0;font-size:13px;color:var(--muted)}
-.pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size:12px;line-height:1.35;background:rgba(0,0,0,.25);border:1px solid var(--border);padding:10px;border-radius:10px}
-code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px;border:1px solid var(--border)}
-.footer{padding-bottom:30px}
-.footnote{margin-top:10px;font-size:12px}
-body {
-  font-family: system-ui, sans-serif;
-  background: #f8f9fa;
-  margin: 0;
+/* =====================================================
+   Export Amiante SIA — Thème sombre
+   ===================================================== */
+
+:root {
+  --bg: #0b0f14;
+  --card: #121824;
+  --card2: #0f1520;
+  --text: #e8eef7;
+  --muted: #aab6c5;
+  --border: rgba(255, 255, 255, .08);
+  --primary: #4ea1ff;
+  --danger: #ff5a6b;
+  --ok: #47d18c;
 }
 
-.app-header {
-  background: #1c7ed6;
-  color: white;
-  padding: 20px;
+* { box-sizing: border-box; }
+
+/* -----------------
+   BASE
+----------------- */
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  background: linear-gradient(180deg, var(--bg), #070a0e);
+  color: var(--text);
 }
+
+p, span, label, li, h1, h2, h3, h4, button, th, td, select, option {
+  color: var(--text);
+}
+
+/* -----------------
+   LAYOUT
+----------------- */
 
 .container {
   padding: 20px;
@@ -67,207 +42,231 @@ body {
   margin: auto;
 }
 
-.step {
-  background: white;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 8px;
+.wrap { max-width: 1100px; margin: 0 auto; padding: 18px; }
+
+/* -----------------
+   HEADER
+----------------- */
+
+.app-header {
+  background: rgba(18, 24, 36, .95);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 20px;
 }
 
+.app-header h1 { margin: 0; font-size: 20px; color: var(--text); }
+.app-header p  { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+
+/* -----------------
+   ÉTAPES
+----------------- */
+
+.step {
+  background: linear-gradient(180deg, var(--card), var(--card2));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.step h2 { margin: 0 0 12px; font-size: 15px; color: var(--text); }
+.step p   { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+.step label { color: var(--muted); font-size: 13px; }
+
 .step.disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   pointer-events: none;
 }
 
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
+/* -----------------
+   BOUTONS
+----------------- */
 
-.tab {
-  padding: 8px 14px;
-  border: 1px solid #ccc;
-  background: #eee;
+button {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, .04);
+  color: var(--text);
+  padding: 9px 16px;
+  border-radius: 9px;
   cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background .15s;
 }
 
-.tab.active {
-  background: #1c7ed6;
-  color: white;
+button:hover    { background: rgba(255, 255, 255, .08); }
+button:disabled { opacity: .4; cursor: not-allowed; }
+
+button.primary {
+  background: rgba(78, 161, 255, .16);
+  border-color: rgba(78, 161, 255, .35);
+  color: #7ec8ff;
 }
+button.primary:hover { background: rgba(78, 161, 255, .24); }
 
-.status {
-  margin-top: 10px;
-  font-size: 0.9em;
-}
-
-.preview-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.preview-table th,
-.preview-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-}
-
-td.locked {
-  background: #f1f3f5;
-}
-
-td.editable {
-  background: #fff9db;
-  cursor: text;
-}
-
-td.editable:focus {
-  outline: 2px solid #fab005;
-}
-
-/* ============================= */
-/* LISIBILITÉ GLOBALE            */
-/* ============================= */
-
-body {
-  color: #000;
-}
-
-p, span, label, li, th, td, button {
-  color: #000;
-}
-
-/* Statuts */
-.status {
-  color: #000;
-}
-
-.status.ok {
-  color: #000;
-}
-
-.status.err {
-  color: #b00020; /* rouge lisible */
-}
-
-/* Étapes */
-.step,
-.step p,
-.step label {
-  color: #000;
-}
-
-/* Preview */
-#previewArea {
-  color: #000;
-}
-
-/* Tableau preview */
-.preview-table th,
-.preview-table td {
-  color: #000;
-}
-
-/* Champs éditables */
-.preview-table td.editable {
-  color: #000;
-  background: #fffbe6; /* léger jaune pour bien voir l’édition */
-  outline: none;
-}
-/* -----------------------------
-   LISIBILITÉ GLOBALE
------------------------------ */
-
-body {
-  color: #111;
-}
-
-p, label, h1, h2, h3 {
-  color: #111;
-}
-
-.status {
-  color: #111;
-  font-weight: 500;
-}
-
-.status.ok {
-  color: #0a7a2f;
-}
-
-.status.err {
-  color: #b30000;
-}
-
-/* -----------------------------
-   INPUT FILE (PDF + XML)
------------------------------ */
+/* -----------------
+   INPUTS
+----------------- */
 
 input[type="file"] {
-  color: #111;
-  font-size: 14px;
+  background: rgba(255, 255, 255, .03);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  color: var(--text);
+  font-size: 13px;
+  display: block;
+  margin-top: 8px;
 }
 
 input[type="file"]::file-selector-button {
-  background: #222;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
+  background: rgba(78, 161, 255, .16);
+  color: #7ec8ff;
+  border: 1px solid rgba(78, 161, 255, .35);
+  border-radius: 7px;
+  padding: 5px 12px;
   margin-right: 10px;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
 }
 
-/* -----------------------------
+select {
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* -----------------
+   STATUTS
+----------------- */
+
+.status {
+  margin-top: 10px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, .02);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.status.ok  {
+  border-color: rgba(71, 209, 140, .35);
+  background: rgba(71, 209, 140, .08);
+  color: #47d18c;
+}
+
+.status.warn {
+  border-color: rgba(255, 184, 76, .35);
+  background: rgba(255, 184, 76, .08);
+  color: #ffb84c;
+}
+
+.status.err {
+  border-color: rgba(255, 90, 107, .35);
+  background: rgba(255, 90, 107, .08);
+  color: #ff5a6b;
+}
+
+/* -----------------
+   ONGLETS
+----------------- */
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, .03);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+  transition: background .15s;
+}
+
+.tab:hover  { background: rgba(255, 255, 255, .06); color: var(--text); }
+
+.tab.active {
+  background: rgba(78, 161, 255, .16);
+  border-color: rgba(78, 161, 255, .35);
+  color: #7ec8ff;
+  font-weight: 600;
+}
+
+/* -----------------
    TABLEAUX PREVIEW
------------------------------ */
+----------------- */
 
 .preview-table {
   width: 100%;
   border-collapse: collapse;
-  color: #111;
+  font-size: 13px;
 }
 
 .preview-table th {
-  background: #f2f2f2;
-  color: #000;
+  background: rgba(255, 255, 255, .05);
+  color: var(--muted);
   text-align: left;
-  padding: 6px;
-  border-bottom: 1px solid #ccc;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 12px;
 }
 
 .preview-table td {
-  padding: 6px;
-  border-bottom: 1px solid #ddd;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
 }
 
-.preview-table td.locked {
-  background: #f9f9f9;
+.preview-table tr:last-child td { border-bottom: none; }
+
+td.locked {
+  color: var(--muted);
+  background: rgba(255, 255, 255, .02);
 }
 
-.preview-table td.editable {
-  background: #fff;
-  border: 1px solid #ccc;
+td.editable {
+  background: rgba(78, 161, 255, .07);
+  border: 1px solid rgba(78, 161, 255, .25) !important;
   cursor: text;
-}
-body {
-  color: #000;
-}
-
-.status,
-.preview-table,
-.preview-table td,
-.preview-table th,
-#pdfRename,
-#pdfRename p,
-#pdfRename span {
-  color: #000 !important;
+  color: var(--text);
+  outline: none;
 }
 
-input[type="file"] {
-  color: #000;
+td.editable:focus {
+  background: rgba(78, 161, 255, .12);
+  border-color: rgba(78, 161, 255, .5) !important;
 }
 
-.tab {
-  color: #000;
+/* -----------------
+   UTILITAIRES
+----------------- */
+
+.muted  { color: var(--muted); }
+.footer { padding-bottom: 30px; }
+
+code {
+  background: rgba(255, 255, 255, .06);
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+
+@media (max-width: 700px) {
+  .tabs { gap: 6px; }
+  .tab  { font-size: 12px; padding: 6px 10px; }
 }
