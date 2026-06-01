@@ -4,6 +4,7 @@ import { buildPdfFileName } from "./pdfRename.js";
 
 const state = {
   // --- fichiers & XML ---
+  dirHandle: null,
   files: [],
   xmlByKey: {},
   extracted: null,
@@ -292,12 +293,10 @@ function getClientBaseFileName() {
   return pdfName.replace(/\.pdf$/i, "");
 }
 
-function handlePdfRename(pdfFile, diagnosticCode) {
+async function handlePdfRename(pdfFile, diagnosticCode) {
   const identification = state.extracted.identification;
   const reperes = state.extracted.reperes;
-
   const date = formatDateJJMMAAAA(identification.dateDiag);
-
   const pcOuPp = reperes[0]?.pcOuPp || "PC";
 
   const newName = buildPdfFileName({
@@ -308,21 +307,28 @@ function handlePdfRename(pdfFile, diagnosticCode) {
     reperes
   });
 
-  // Affichage du nom final
-  if (pdfFinalSpan) {
-    pdfFinalSpan.textContent = newName;
+  if (pdfFinalSpan) pdfFinalSpan.textContent = newName;
+
+  try {
+    const blob = new Blob([pdfFile], { type: "application/pdf" });
+    await saveToExportsFolder(newName, blob);
+    setStatus("pdfSaveStatus", `✓ PDF enregistré dans "Exports SIA" : ${newName}`, "ok");
+  } catch (err) {
+    console.error(err);
+    setStatus("pdfSaveStatus", "Erreur lors de l'enregistrement du PDF.", "err");
   }
+}
 
-  // Téléchargement
-  const blob = new Blob([pdfFile], { type: "application/pdf" });
-  const url = URL.createObjectURL(blob);
+// -------------------------------
+// Sauvegarde dans le dossier Exports SIA
+// -------------------------------
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = newName;
-  a.click();
-
-  URL.revokeObjectURL(url);
+async function saveToExportsFolder(filename, data) {
+  const exportDir = await state.dirHandle.getDirectoryHandle("Exports SIA", { create: true });
+  const fileHandle = await exportDir.getFileHandle(filename, { create: true });
+  const writable = await fileHandle.createWritable();
+  await writable.write(data);
+  await writable.close();
 }
 
 function parseNomenclatureTSV(tsv) {
@@ -380,35 +386,40 @@ function parseXmlString(text) {
   return xml;
 }
 
-function pickXmlFile(nameContains) {
-  const needle = nameContains.toLowerCase();
-  return state.files.find((f) => f.name.toLowerCase().includes(needle));
-}
-
 async function loadRequiredXml() {
-  const general = pickXmlFile("table_general_bien");
-  const amiante = pickXmlFile("table_z_amiante.xml");
-  const docRemis = pickXmlFile("table_z_amiante_doc_remis");
+  const xmlDir = await state.dirHandle.getDirectoryHandle("XML");
+
+  const handles = { general: null, amiante: null, doc: null };
+
+  for await (const [name, handle] of xmlDir.entries()) {
+    if (handle.kind !== "file") continue;
+    const lower = name.toLowerCase();
+    if (lower.includes("table_general_bien"))             handles.general = handle;
+    else if (lower === "table_z_amiante.xml")              handles.amiante = handle;
+    else if (lower.includes("table_z_amiante_doc_remis")) handles.doc     = handle;
+  }
 
   const missing = [];
-  if (!general) missing.push("Table_General_Bien.xml");
-  if (!amiante) missing.push("Table_Z_Amiante.xml");
-  if (!docRemis) missing.push("Table_Z_Amiante_doc_remis.xml");
+  if (!handles.general) missing.push("Table_General_Bien.xml");
+  if (!handles.amiante) missing.push("Table_Z_Amiante.xml");
+  if (!handles.doc)     missing.push("Table_Z_Amiante_doc_remis.xml");
 
   if (missing.length) {
     setStatus("analysisStatus", `Fichiers manquants : ${missing.join(", ")}`, "err");
     throw new Error("Fichiers requis manquants");
   }
 
+  const readHandle = async (h) => readFileSmart(await h.getFile());
+
   const [generalText, amianteText, docText] = await Promise.all([
-    readFileSmart(general),
-    readFileSmart(amiante),
-    readFileSmart(docRemis),
+    readHandle(handles.general),
+    readHandle(handles.amiante),
+    readHandle(handles.doc),
   ]);
 
   state.xmlByKey.general = parseXmlString(generalText);
   state.xmlByKey.amiante = parseXmlString(amianteText);
-  state.xmlByKey.doc = parseXmlString(docText);
+  state.xmlByKey.doc     = parseXmlString(docText);
 }
 
 function qText(xml, selector) {
@@ -715,24 +726,34 @@ function renderIdentificationPreview() {
   });
 }
 
-function handleMissionFolder(e) {
-  const files = [...e.target.files];
+async function handleSelectFolder() {
+  try {
+    const dirHandle = await window.showDirectoryPicker({ mode: "readwrite" });
+    state.dirHandle = dirHandle;
 
-  // On ne garde que les fichiers dans /XML
-  const xmlFiles = files.filter(f =>
-    f.webkitRelativePath && f.webkitRelativePath.includes("/XML/")
-  );
+    // Vérifier que le sous-dossier XML existe
+    let xmlDir;
+    try {
+      xmlDir = await dirHandle.getDirectoryHandle("XML");
+    } catch {
+      setStatus("xmlStatus", "Sous-dossier XML introuvable dans le dossier sélectionné.", "err");
+      return;
+    }
 
-  if (!xmlFiles.length) {
-    setStatus("xmlStatus", "Aucun fichier XML trouvé dans le dossier /XML.", "err");
-    return;
+    // Compter les fichiers XML présents
+    let count = 0;
+    for await (const [name, handle] of xmlDir.entries()) {
+      if (handle.kind === "file" && name.toLowerCase().endsWith(".xml")) count++;
+    }
+
+    setStatus("xmlStatus", `Mission "${dirHandle.name}" chargée — ${count} fichier(s) XML détecté(s).`, "ok");
+    document.getElementById("step2").classList.remove("disabled");
+
+  } catch (err) {
+    if (err.name !== "AbortError") {
+      setStatus("xmlStatus", "Erreur lors de la sélection du dossier.", "err");
+    }
   }
-
-  state.files = xmlFiles;
-  setStatus("xmlStatus", `${xmlFiles.length} fichier(s) XML détecté(s).`, "ok");
-
-  // Active l'étape Analyse
-  document.getElementById("step2").classList.remove("disabled");
 }
 
 async function analyzeXml() {
@@ -772,28 +793,33 @@ document.getElementById("step5").classList.remove("disabled");
   }
 }
 
-function exportExcel() {
+async function exportExcel() {
   if (!state.extracted) {
     alert("Aucune donnée à exporter.");
     return;
   }
 
-  // Nom client calculé dynamiquement
   const baseName = getClientBaseFileName();
   if (!baseName) {
     alert("Nom client non disponible.");
     return;
   }
 
-  // Injecte les valeurs éditées
   state.extracted.identification = { ...state.identification };
-
   const wb = buildWorkbook(state.extracted);
-
-  // 🔥 même nom que le PDF client
   const excelFileName = baseName + ".xlsx";
 
-  XLSX.writeFile(wb, excelFileName);
+  try {
+    const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([buf], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+    await saveToExportsFolder(excelFileName, blob);
+    setStatus("exportStatus", `✓ Fichier enregistré dans "Exports SIA" : ${excelFileName}`, "ok");
+  } catch (err) {
+    console.error(err);
+    setStatus("exportStatus", "Erreur lors de l'enregistrement du fichier Excel.", "err");
+  }
 }
 
 
@@ -971,16 +997,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      handlePdfRename(pdfInput.files[0], diagSelect.value);
+      handlePdfRename(pdfInput.files[0], diagSelect.value).catch(console.error);
     });
   }
 
   // --------------------
   // Sélection mission
   // --------------------
-  const missionFolder = document.getElementById("missionFolder");
-  if (missionFolder) {
-    missionFolder.addEventListener("change", handleMissionFolder);
+  const selectFolderBtn = document.getElementById("selectFolderBtn");
+  if (selectFolderBtn) {
+    selectFolderBtn.addEventListener("click", handleSelectFolder);
   }
 
   // --------------------
@@ -996,7 +1022,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------
   const exportBtn = document.getElementById("exportBtn");
   if (exportBtn) {
-    exportBtn.addEventListener("click", exportExcel);
+    exportBtn.addEventListener("click", () => exportExcel());
   }
 
   // --------------------
@@ -1009,3 +1035,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
