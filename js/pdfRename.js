@@ -7,7 +7,23 @@ export function buildPdfFileName({
   pcOuPp,
   reperes
 }) {
-  const esiBase = esiNiv3.split("-").slice(0, 3).join("-");
+
+  // Règle ESI selon le type de diagnostic
+  // Niveau bâtiment (3 segments) : DTA, FRDTA, RADTA
+  // Niveau PC/PP (4 segments si PC, complet si PP) : tous les autres
+  const segments = esiNiv3.split("-");
+
+  const NIVEAU_BATIMENT = ["DTA", "FRDTA", "RADTA"];
+
+  let esiBase;
+  if (NIVEAU_BATIMENT.includes(diagnosticCode)) {
+    esiBase = segments.slice(0, 3).join("-");
+  } else if (pcOuPp === "PC") {
+    esiBase = segments.slice(0, 4).join("-");
+  } else {
+    // PP ou valeur non reconnue → code complet
+    esiBase = esiNiv3;
+  }
 
   // Ordre de priorité (du plus défavorable au moins)
   const PRIORITY = [
@@ -24,7 +40,6 @@ export function buildPdfFileName({
     const etat = (r.etatConservation || "").toUpperCase();
     const resultat = (r.resultatAmiante || "").toUpperCase();
 
-    // Liste B/C → prioriser B
     const isB = liste.includes("B");
     const isC = liste.includes("C") && !isB;
 
@@ -37,7 +52,7 @@ export function buildPdfFileName({
     if (isB) {
       if (etat.includes("AC2")) detected.add("PB2");
       else if (etat.includes("AC1")) detected.add("PB1");
-      else if (etat.includes("EP")) detected.add("PB");
+      else if (etat.includes("EP"))  detected.add("PB");
     }
 
     if (isC && resultat.includes("AMIANTE")) {
@@ -49,8 +64,7 @@ export function buildPdfFileName({
     detected.add("N");
   }
 
-  const finalResult =
-    PRIORITY.find(code => detected.has(code)) || "N";
+  const finalResult = PRIORITY.find(code => detected.has(code)) || "N";
 
   return `${esiBase}_${diagnosticCode}_${dateJJMMAAAA}_${pcOuPp}_${finalResult}.pdf`;
 }
