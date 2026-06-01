@@ -353,31 +353,6 @@ function setStatus(targetId, msg, kind = "") {
 }
 
 
-function listFiles(files) {
-  const ul = $("filesList");
-  ul.innerHTML = "";
-  [...files]
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .forEach((f) => {
-      const li = document.createElement("li");
-      li.textContent = f.webkitRelativePath ? `${f.webkitRelativePath}` : f.name;
-      ul.appendChild(li);
-    });
-}
-
-function mergeFiles(newFiles) {
-  const map = new Map(state.files.map((f) => [f.name.toLowerCase(), f]));
-  for (const f of newFiles) map.set(f.name.toLowerCase(), f);
-  state.files = [...map.values()];
-  listFiles(state.files);
-
-  const hasAny = state.files.length > 0;
-  $("analyzeBtn").disabled = !hasAny;
-  $("exportBtn").disabled = true;
-  state.extracted = null;
-
-  setStatus(hasAny ? `${state.files.length} fichier(s) chargé(s). Clique sur “Analyser”.` : "Aucun fichier chargé.", hasAny ? "ok" : "");
-}
 
 // -------------------------------
 // Decoding + XML parsing
@@ -421,7 +396,7 @@ async function loadRequiredXml() {
   if (!docRemis) missing.push("Table_Z_Amiante_doc_remis.xml");
 
   if (missing.length) {
-    setStatus(`Fichiers manquants : ${missing.join(", ")}`, "err");
+    setStatus("analysisStatus", `Fichiers manquants : ${missing.join(", ")}`, "err");
     throw new Error("Fichiers requis manquants");
   }
 
@@ -701,13 +676,6 @@ function fileNameFromId(identification) {
 // Analyze + Export
 // -------------------------------
 
-function updatePreviews(extracted) {
-  $("previewId").textContent = JSON.stringify(extracted.identification, null, 2);
-  $("previewDoc").textContent = `Lignes: ${extracted.etude.length}\n` + JSON.stringify(extracted.etude.slice(0, 5), null, 2) + (extracted.etude.length > 5 ? "\n…" : "");
-  $("previewRep").textContent = `Lignes: ${extracted.reperes.length}\n` + JSON.stringify(extracted.reperes.slice(0, 5), null, 2) + (extracted.reperes.length > 5 ? "\n…" : "");
-  $("previewNom").textContent = `Lignes: ${extracted.nomenclature.length}\n` + JSON.stringify(extracted.nomenclature.slice(0, 3), null, 2) + (extracted.nomenclature.length > 3 ? "\n…" : "");
-}
-
 function renderIdentificationPreview() {
   const container = document.getElementById("previewArea");
 
@@ -756,7 +724,7 @@ function handleMissionFolder(e) {
   );
 
   if (!xmlFiles.length) {
-    setStatus("Aucun fichier XML trouvé dans le dossier /XML.", "err");
+    setStatus("xmlStatus", "Aucun fichier XML trouvé dans le dossier /XML.", "err");
     return;
   }
 
@@ -805,30 +773,30 @@ document.getElementById("step5").classList.remove("disabled");
 }
 
 function exportExcel() {
-
   if (!state.extracted) {
     alert("Aucune donnée à exporter.");
     return;
   }
 
-  // 🔥 récupère le nom client automatiquement
+  // Nom client calculé dynamiquement
   const baseName = getClientBaseFileName();
-
   if (!baseName) {
-    alert("Nom client non généré. Vérifie le type de diagnostic ou l'analyse XML.");
+    alert("Nom client non disponible.");
     return;
   }
 
-  // Injecte les valeurs éditées UI
+  // Injecte les valeurs éditées
   state.extracted.identification = { ...state.identification };
 
   const wb = buildWorkbook(state.extracted);
 
-  // 🔥 même nom que PDF mais en XLSX
+  // 🔥 même nom que le PDF client
   const excelFileName = baseName + ".xlsx";
 
   XLSX.writeFile(wb, excelFileName);
 }
+
+
 
 // -------------------------------
 // UI — Previews par onglet
@@ -1041,4 +1009,3 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
