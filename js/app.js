@@ -378,9 +378,16 @@ async function readFileSmart(file) {
   return text;
 }
 
+function sanitizeXml(text) {
+  // Liciel écrit parfois des & bruts dans les valeurs (ex: "CHAMBRE 1&2").
+  // En XML strict, & doit être échappé en &amp;
+  // On remplace uniquement les & qui ne font pas déjà partie d'une entité valide.
+  return text.replace(/&(?![a-zA-Z][a-zA-Z0-9]*;|#[0-9]+;|#x[0-9a-fA-F]+;)/g, "&amp;");
+}
+
 function parseXmlString(text) {
   const parser = new DOMParser();
-  const xml = parser.parseFromString(text, "application/xml");
+  const xml = parser.parseFromString(sanitizeXml(text), "application/xml");
   const err = xml.querySelector("parsererror");
   if (err) throw new Error("XML invalide ou mal formé");
   return xml;
@@ -424,7 +431,9 @@ async function loadRequiredXml() {
 
 function qText(xml, selector) {
   const n = xml.querySelector(selector);
-  return n && n.textContent ? n.textContent.trim() : "";
+  if (!n || !n.textContent) return "";
+  // Normalise les sauts de ligne internes (adresses multi-lignes Liciel)
+  return n.textContent.replace(/[\r\n]+/g, " ").trim();
 }
 
 // -------------------------------
@@ -1035,4 +1044,3 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
