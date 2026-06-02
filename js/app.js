@@ -6,6 +6,8 @@ const state = {
   // --- fichiers & XML ---
   dirHandle: null,
   files: [],
+  pdfFiles: [],
+  selectedPdfHandle: null,
   xmlByKey: {},
   extracted: null,
 
@@ -293,7 +295,12 @@ function getClientBaseFileName() {
   return pdfName.replace(/\.pdf$/i, "");
 }
 
-async function handlePdfRename(pdfFile, diagnosticCode) {
+async function handlePdfRename(diagnosticCode) {
+  if (!state.selectedPdfHandle) {
+    alert("Sélectionne un fichier PDF dans la liste.");
+    return;
+  }
+
   const identification = state.extracted.identification;
   const reperes = state.extracted.reperes;
   const date = formatDateJJMMAAAA(identification.dateDiag);
@@ -310,7 +317,8 @@ async function handlePdfRename(pdfFile, diagnosticCode) {
   if (pdfFinalSpan) pdfFinalSpan.textContent = newName;
 
   try {
-    const blob = new Blob([pdfFile], { type: "application/pdf" });
+    const pdfFile = await state.selectedPdfHandle.getFile();
+    const blob = new Blob([await pdfFile.arrayBuffer()], { type: "application/pdf" });
     await saveToExportsFolder(newName, blob);
     setStatus("pdfSaveStatus", `✓ PDF enregistré dans "Exports SIA" : ${newName}`, "ok");
   } catch (err) {
@@ -765,6 +773,57 @@ async function handleSelectFolder() {
   }
 }
 
+// -------------------------------
+// Scan et sélection du PDF
+// -------------------------------
+
+async function scanPdfFiles() {
+  const pdfs = [];
+  for await (const [name, handle] of state.dirHandle.entries()) {
+    if (handle.kind === "file" && name.toLowerCase().endsWith(".pdf")) {
+      pdfs.push({ name, handle });
+    }
+  }
+  // Trier alphabétiquement
+  pdfs.sort((a, b) => a.name.localeCompare(b.name));
+  state.pdfFiles = pdfs;
+  renderPdfPicker();
+}
+
+function renderPdfPicker() {
+  const area = document.getElementById("pdfPickerArea");
+  if (!area) return;
+
+  // Réinitialiser la sélection
+  state.selectedPdfHandle = null;
+  if (pdfOriginalSpan) pdfOriginalSpan.textContent = "—";
+  if (pdfFinalSpan)    pdfFinalSpan.textContent    = "—";
+
+  if (!state.pdfFiles.length) {
+    area.innerHTML = `<p class="muted">Aucun fichier PDF trouvé à la racine de la mission.</p>`;
+    return;
+  }
+
+  const items = state.pdfFiles
+    .map(({ name }) => `<button class="pdf-item" data-name="${name}">${name}</button>`)
+    .join("");
+
+  area.innerHTML = `<div class="pdf-list">${items}</div>`;
+
+  area.querySelectorAll(".pdf-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      area.querySelectorAll(".pdf-item").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      const found = state.pdfFiles.find(p => p.name === btn.dataset.name);
+      state.selectedPdfHandle = found?.handle || null;
+
+      if (pdfOriginalSpan) pdfOriginalSpan.textContent = btn.dataset.name;
+      updatePdfFinalName();
+    });
+  });
+}
+
 async function analyzeXml() {
   try {
    setStatus("analysisStatus", "Analyse des fichiers XML en cours…");
@@ -792,6 +851,7 @@ updatePdfFinalName();
     document.getElementById("step3").classList.remove("disabled");
     document.getElementById("step4").classList.remove("disabled");
 document.getElementById("step5").classList.remove("disabled");
+    await scanPdfFiles();
 
    setStatus("analysisStatus", "Analyse terminée. Prévisualisation disponible.", "ok");
 
@@ -974,25 +1034,15 @@ document.addEventListener("DOMContentLoaded", () => {
   pdfOriginalSpan = document.getElementById("pdfOriginalName");
   pdfFinalSpan = document.getElementById("pdfFinalName");
 
-  const pdfInput = document.getElementById("pdfInput");
   const diagSelect = document.getElementById("diagnosticType");
 
   if (diagSelect) {
-  diagSelect.addEventListener("change", () => {
-    updatePdfFinalName();
-  });
-}
+    diagSelect.addEventListener("change", () => {
+      updatePdfFinalName();
+    });
+  }
 
   const renameBtn = document.getElementById("renamePdfBtn");
-
- if (pdfInput) {
-  pdfInput.addEventListener("change", () => {
-    if (pdfInput.files.length && pdfOriginalSpan) {
-      pdfOriginalSpan.textContent = pdfInput.files[0].name;
-      updatePdfFinalName();
-    }
-  });
-}
 
   if (renameBtn) {
     renameBtn.addEventListener("click", () => {
@@ -1000,13 +1050,11 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Analyse XML requise avant le renommage PDF.");
         return;
       }
-
-      if (!pdfInput.files.length) {
-        alert("Sélectionne un fichier PDF.");
+      if (!state.selectedPdfHandle) {
+        alert("Sélectionne un fichier PDF dans la liste.");
         return;
       }
-
-      handlePdfRename(pdfInput.files[0], diagSelect.value).catch(console.error);
+      handlePdfRename(diagSelect.value).catch(console.error);
     });
   }
 
@@ -1044,3 +1092,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
