@@ -501,10 +501,15 @@ function extractEtudeDocumentaire(docXml) {
 // -------------------------------
 
 function mapPcOuPp(generalXml) {
-  const v = qText(generalXml, "LiColonne_Immeuble_Nature_bien");
-  if (v === "Habitation (partie privative d'immeuble)") return "PP";
-  if (v === "Habitation (parties communes)") return "PC";
-  return "";
+  // Normalisation : minuscules + apostrophe typographique → standard
+  const v = qText(generalXml, "LiColonne_Immeuble_Nature_bien")
+              .toLowerCase()
+              .replace(/’/g, "'");
+
+  if (v.includes("privative"))        return "PP"; // Habitation (partie privative d'immeuble)
+  if (v.includes("maison"))           return "PP"; // Habitation (maison individuelle)
+  if (v.includes("communes"))         return "PC"; // Habitation (parties communes)
+  return "PC"; // fallback par défaut
 }
 
 function extractCodeFromEsi(esi) {
@@ -1092,4 +1097,3 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
