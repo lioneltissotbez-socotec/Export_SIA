@@ -55,42 +55,33 @@
     <div id="exportStatus" class="status"></div>
   </section>
 
-   <!-- ÉTAPE 5 -->
-<section class="step disabled" id="step5">
-  <h2>5. Renommage PDF client</h2>
+  <!-- ÉTAPE 5 -->
+  <section class="step disabled" id="step5">
+    <h2>5. Renommage PDF client</h2>
 
-  <p>Sélectionne le PDF du rapport (racine de la mission)</p>
+    <p>Fichiers PDF détectés à la racine de la mission :</p>
+    <div id="pdfPickerArea"></div>
 
-  <input type="file" id="pdfInput" accept="application/pdf">
+    <p>Type de diagnostic</p>
+    <select id="diagnosticType">
+      <option value="RAAT">RAAT - Repérage Amiante Avant Travaux</option>
+      <option value="RAAD">RAAD - Repérage Amiante Avant Démolition</option>
+      <option value="RAAV">RAAV - Repérage Amiante Avant Vente</option>
+      <option value="DAPP">DAPP - Diagnostic Amiante Parties Privatives</option>
+      <option value="EXAM">EXAM - Examen Visuel</option>
+      <option value="MESA">MESA - Mesures Empoussièrement</option>
+      <option value="RADTA">RADTA</option>
+      <option value="DTA">DTA</option>
+      <option value="FRDTA">FRDTA</option>
+      <option value="BSDA">BSDA</option>
+    </select>
 
-  <p>Type de diagnostic</p>
+    <p><strong>PDF sélectionné :</strong> <span id="pdfOriginalName">—</span></p>
+    <p><strong>Nom final client :</strong> <span id="pdfFinalName">—</span></p>
 
-  <select id="diagnosticType">
-    <option value="RAAT">RAAT - Repérage Amiante Avant Travaux</option>
-    <option value="RAAD">RAAD - Repérage Amiante Avant Démolition</option>
-    <option value="RAAV">RAAV - Repérage Amiante Avant Vente</option>
-    <option value="DAPP">DAPP - Diagnostic Amiante Parties Privatives</option>
-    <option value="EXAM">EXAM - Examen Visuel</option>
-    <option value="MESA">MESA - Mesures Empoussièrement</option>
-    <option value="RADTA">RADTA</option>
-    <option value="DTA">DTA</option>
-    <option value="FRDTA">FRDTA</option>
-    <option value="BSDA">BSDA</option>
-  </select>
-
-  <p>
-  <strong>PDF sélectionné :</strong>
-  <span id="pdfOriginalName">—</span>
-</p>
-
-<p>
-  <strong>Nom final client :</strong>
-  <span id="pdfFinalName">—</span>
-</p>
-
-  <button id="renamePdfBtn">Renommer et enregistrer le PDF</button>
-  <div id="pdfSaveStatus" class="status"></div>
-</section>
+    <button id="renamePdfBtn">Enregistrer le PDF renommé dans Exports SIA</button>
+    <div id="pdfSaveStatus" class="status"></div>
+  </section>
 
 
 </main>
